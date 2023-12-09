@@ -1,18 +1,36 @@
 # Topic: OPERATING SYSTEM
 
-## What is `process`, `thread`? What are the differences between them?
+[Preference](https://tildesites.bowdoin.edu/~sbarker/teaching/courses/os/14spring/lectures.html)
 
-A process is like a program in execution. And a thread is a segment of a process. Each process has its own memory and is isolated. Meanwhile, threads of the same process can easily communicate with other threads, access common variables, memory.
+# 1. Process and Thread
 
-## What data `process`, `thread` need to live? Why do they say that Thread is a lightweight process?
+## What is `process`?
+- Process is like a program in execution.
+- The OS has a data structure called Process Controll Block (PCB) to store information and manage process. A PCB contains: Process ID, Process state, Program counters, CPU Registers, List of open files, etc.
+- A process in memory includes:
+    - Text segment contains the instructions of the program.
+    - Stack segment stores temporary data used during program execution.
+    - Data contains global variables.
+    - Heap is the memory that is dynamically allocated during run time.
+
+## What is `thread`?
+- Thread is an execution stream within a process. It comprises a thread ID, program counter, register set, and stack. It shares with other threads belonging to the same process its code section, data section, and other operating-system resources, such as open ﬁles and signals.
+
+## What are the differences between `process` and `thread`?
+
+| Process     | Thread        | 
+| -----------   | -----------   |
+| <div style="width:290px">A process is like a program in execution. Each process has its own memory address space and is isolated.</div>     |      <div style="width:290px">Thread is an execution stream within a process. Multiple threads can exist within a process, sharing the same memory space, can easily communicate with each other.</div>    |
+
+## Why do they say that Thread is a lightweight process?
 
 Thread is a lightweight process because it does not cost much CPU to switch between threads as between processes.
 
 ## How CPU switch (context switch) between processes/threads? How data is to ensure safety? (in case single CPU core and multiple CPU cores)
 
-When process context switching happens, the state of the current process will be stored in Process Control Block (PCB), so this process can be resumed later. It includes the value of the CPU registers, the process state, and memory-management information. Data pages in memory of the current process can be replaced or not, depending on the availability of memory, and the memory-management method of the operating system.
+- When process context switching happens, the state of the current process will be stored in Process Control Block (PCB), so this process can be resumed later. It includes the value of the CPU registers, the process state, and memory-management information. Data pages in memory of the current process are typically kept safe because the information about these pages have been saved in PCB. However, depending on the memory-management method of OS and the availability of memory, it can lead to the replacement of these data pages (data pages replacement have nothing to do with context switching).
 
-When thread context switching happens, the state of the current thread will be stored in Thread Control Block (TCB), so the thread can be resumed later. It includes the value of the CPU registers, the thread state, a program counter, a stack pointer, and a pointer to the PCB of the process to which the thread belongs. There is one major difference in thread context switching compared to processes: the address space remains the same (the is no page replacement).
+- When thread context switching happens, the state of the current thread will be stored in Thread Control Block (TCB), so the thread can be resumed later. It includes the value of the CPU registers, the thread state, a program counter, a stack pointer, and a pointer to the PCB of the process to which the thread belongs. There is one major difference in thread context switching compared to processes: the address space remains the same (there is no page replacement).
 
 ## What is multi-process and multi-thread? When should we use which?
 
@@ -22,17 +40,25 @@ Multi-threading is when more than 2 threads created by the same process are runn
 
 ## Process has how many states? How does it change between each state?
 
-Basically, a process has 5 states: new, ready, running, wait, and terminate. New is the status of the process when it is created. At the ready status, the process waits to be assigned to a processor. When the process is assigned to a processor, its status becomes running and the processor executes the process instructions. If the process need something like I/O, or the CPU is assigned for another process, process status will become waiting. When all the instructions are executed, or the process is terminated by OS, it moves to terminate state where it waits to be removed out of the main memory.
+Basically, a process has 5 states: new, ready, running, wait, and terminate. 
+- New is the state of the process when it is created (it is still in the process of setting up). After the process is intialized, it transitions to Ready state.
+- At the ready state, the process waits to be assigned to a processor. When the process is assigned to a processor, its state becomes running.
+- At the running state, the processor executes the process instructions. If the process need something like I/O, it moves to the Waiting state. If process completes its execution, it moves to Terminated state. If the process's time slice expires, or a higher priority process comes, it moves to state.
+- At waiting state, the state is waiting for some external event (like I/O operation done) occurs, it then moves back to Ready state.
+- At terminated state, the process has finished its execution and is waiting for the OS to reclaim resoures. After the OS done reclaiming, it is removed from main memoey.
 
 ## Scheduling algorithm
 
-There are many types of scheduling algorithms like first come first serve, shortest job first, shortest remaining time first, round-robin, etc.
+There are many types of scheduling algorithms like:
+- First come first serve: Processes are executed in the order they arrive in the ready queue.
+- Shortest job first: Executes the process with shortest estimated run time first.
+- Round-robin: Each process gets a small fixed amount of CPU time. After this time is up, the process is preempted and added to the end of ready queue.
 
 ## What will happen if a process is waiting? Or a thread is sleeping?
 
-When a thread is sleeping, other threads might be running.
-
 When a process is waiting, OS can run another process.
+
+When a thread is sleeping, other threads might be running.
 
 ## How CPU detects that a thread is sleeping? Or detect when it wants to run?
 
@@ -40,7 +66,7 @@ OS has an OS scheduler that keeps track of the list of processes and their statu
 
 ## What is thread-pool? How to use it? Describe how to create a thread-pool in your programming language
 
-Thread pool is a design pattern that's used to manage concurrent execution. It is also called as worker model. A thread pool has a limited number of threads to allocate for concurrent execution.
+A thread pool is a design pattern used in concurrent programming to efficiently manage multiple threads used by a program (it's also called as worker model). Instead of creating and destroying threads each time a task needs to be executed, a thread pool maintains a pool of pre-instantiated, idle threads that can be reused for multiple tasks.
 
 ## Can 2 different processes access or change data of each other address space? (this question may make you confuse with your knowledge about virtual memory)
 
@@ -60,17 +86,19 @@ It can use a shared resource or pass messages to other processes.
 
 ## What is child-process? How to create a child-process?
 
-Child process is a process created by another process. Child process inherits most of properties from its parent, such as environment settings, process directory, from its parent. It does not inherit some properties like process id, lock...
+Child process is a process created by another process. The parent process can call `fork()` to create a new child process.
 
 ## What data a child-process have when we create it?
 
-As above.
+The parent defines (or donates) resources and privileges to children. Children can receive all parent's resources or subset of parent's resources. The resources can be inherited includes: environment settings, process directory, open files, memory space, etc. But the child process must have different process id.
 
 ## Can it read/write data on it's parent process?
 
-No, it cannot. If it wants to communicate with its parents, it has to use a separate shared memory segment or use a socket.
+No, it cannot. If it wants to communicate with its parents, it has to use a separate shared memory segment or use a socket or message queue.
 
 ## What is copy on write (COW), Dirty COW? **(this concept is important to understand OS)**
+
+On process creation, when parent process calls `fork()`, the memory space (code segment, data segment, stack segment, heap segment) will be shared between parent process and child process. After that, child needs to operate independently, so COW will be using on data segment, stack segment (and maybe code segment if the child runs new program using `exec()`) .
 
 Copy on write is when multiple callers ask for a copy of a resource, OS can return the pointer to the old resource and only make the private copy for a caller when necessary, like when the caller wants to modify this resource. The advantage is if the caller makes no modification, no private copy needs to be created.
 
@@ -82,13 +110,16 @@ Child process cannot change variables of its parent.
 
 2 processes can handle the same file descriptor/socket. To prevent other processes does further things with the socket that the current process wants to close, we can use shutdown function instead of close function to stop other processes from using this socket.
 
+# 2. Concurrency and Parrallel
+
 ## Concurrency vs Parallels? (in case single CPU core and multiple CPU cores)
 
-To be defined.
+- Concurrency: Many tasks interleave on a CPU core.
+- Parallelism: Many tasks run on different CPU cores.
 
 ## What is critical zone?
 
-Critical zone or critical region is the segment of code where processes access shared resources.
+Critical zone or critical region is the segment of code where different processes can access but only one process can execute at a time.
 
 ## What is race condition and how to handle this case?
 
@@ -96,11 +127,17 @@ Race condition is when two threads access a variable at the same time. It can le
 
 ## What is locking mechanism? mutex? semaphore? spinlock? read lock vs write lock?
 
-Mutex is a mutual exclusive flag to detect if the desired resource is free and claim it for use.
-
-Semaphore is a generalized mutex, to control the number of available resources.
-
-Spinlock is a mechanism in which a process keeps asking for the availability of the resource via polling.
+- Atomic process: Process that is not interfered by interrupts.
+- Synchronization: Use of atomic operations to ensure cooperation between threads.
+- Mutual Exclusion (mutex): Ensures that only one thread does an activity at a time and excludes other threads from doing at that time.
+- Lock: A mechanism that a process use to prevent other process from doing something:
+    - Lock before entering a critical section (or accessing shared data).
+    - Unlock when leaving a critical section.
+    - Wait if locked.
+- Semaphore is a generalized lock, to control the number of available resources.
+    - Binary Semaphore is same as lock.
+    - Counting Semaphore is used when multiple units of a resource are available. The initial value of counting semaphore is usually the number of resources. A process can acquire access as long as semphore > 0 (at least one unit of the resource is available).
+- Spinlock is a mechanism in which a process keeps asking (busy-wait) for the availability of the resource via polling (instead of sleeping while waiting for the availability of resource).
 
 ## What is deadlock and how to avoid deadlock?
 
@@ -115,15 +152,23 @@ Deadlock happens when all of these conditions happen:
 
 This can be avoided by making processes release their locked variable when they cannot get the other necessary resource, or granting some preemption permission for some processes.
 
+# 3. Memory Management
+
 ## How does memory is managed in the OS?
 
 To be defined.
 
 ## What is virtual memory? Why do we need it? How does it work?
 
-Virtual memory is a memory management technique where secondary memory (eg disks) can be used as main memory like RAM. Virtual memory allows computers to operate quite normally when memory shortages happen.
+Virtual memory is a memory management technique used by operating systems to provide an "illusion" to processes that each one has its own dedicated piece of the computer's physical memory, known as RAM (Random Access Memory). In reality, the physical memory is shared among multiple processes, and each process is given the illusion that it has a contiguous block of addressable memory, known as virtual memory.
 
-When a process is in use, its data is stored in a physical address using RAM. If at any point, RAM space is needed for something more urgent, data can be swapped out of RAM into virtual memory and swapped back again when needed.
+#### Why do we need it?
+- Isolation: Each process has its own memory space, preventing other process to access.
+- Efficient Use of Physical Memory
+- Ease of Programming
+
+#### How does it work?
+Read more [here](https://tildesites.bowdoin.edu/~sbarker/teaching/courses/os/14spring/lectures.html) at Leture 11, 12, 13.
 
 ## How large virtual memory is?
 
@@ -131,15 +176,18 @@ The size of virtual memory is unlimited. Actually, it is limited by the disk spa
 
 ## What is paging?
 
-Paging is the memory management mechanism that allows OS to get the processes from the secondary memory to the physical memory in form of fixed-size blocks called pages.
+Paging is a memory management scheme used by computer operating systems to allow processes to use memory addresses that are independent of the actual physical layout of memory. In a paging system, both physical memory and virtual memory are divided into fixed-size blocks called pages. The primary goal of paging is to provide a more flexible and efficient way to manage memory compared to contiguous memory allocation.
 
 ## Can 2 processes map to the same physical address? How and in which case?
 
 Yes. Each process has its virtual memory address and can be mapped to the same physical memory address when it is processed by CPU. The condition is they need to take turns to be processed.
 
-## What is heap space and stack space?
+## The structure of a process in memory?
 
-Heap space is for dynamic memory allocation. Stack space is for static memory allocation.
+- Stack: Contains temporary data (such as function parameters, return address, local variables).
+- Heap: Memory that is dynamically allocated during process run time.
+- Data: Contains global variables.
+- Text: Program code.
 
 ## What will happen with memory when you open an application?
 
@@ -196,6 +244,8 @@ Process memory is divided into four sections:
 - Stack section: where local variables are stored.
 - Heap section: where dynamically allocated variables are stored.
 
+# 4. File System
+
 ## Why in Linux everything is "file"?
 
 It will create a uniform interface for operations on Linux systems. To be more exact, everything in Linux is a stream of bytes that is represented as a file descriptor.
@@ -216,6 +266,8 @@ Buffer is a segment of memory that is reserved to store necessary data being pro
 
 If 2 processes read/write to the same file, it means they use the same file descriptor to access this file, also the file offset. So the changes that one process does with the shared file are visible to the other process. ([More](https://walkerlala.github.io/archive/what-if-write-to-the-same-file.html))
 
+# 5. System Call
+
 ## What is system call (syscal)?
 
 A syscall is a programmatic way that allows a computer program to request a service from the kernel of the operating system, on which the program will be executed.
@@ -234,6 +286,8 @@ Memory is divided into kernel space and user space:
 
 - Kernel space is where the code of the kernel is stored, and executed.
 - User space is where the code of everything other than the kernel is stored and executed.
+
+# 7. Caching
 
 ## What is in-memory cache? (memcached/redis)
 

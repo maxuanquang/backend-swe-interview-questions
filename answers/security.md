@@ -32,7 +32,9 @@ A perfect hash function of a set is a hash function that maps distinct elements 
 
 ## What is the load factor of hashing?
 
-When a map initiates, two things need to be considered are the initial capacity and the load factor. The initial capacity is the capacity of the hash table underlying the map. When the load is bigger than the load factor, it means the underlying table is quite full, a process called rehashing happens, a twice bigger size hash table is allocated to store the data of the map.
+When a map initiates, two things need to be considered are the initial capacity and the load factor. The initial capacity is the capacity of the hash table underlying the map. And `load = Number of elements in hash table / Size of the hash table`. `Load factor` is a load threshold, usually is 0.7, 0.8.
+
+ When the load is bigger than the load factor, it means the underlying table is quite full, a process called rehashing happens, a twice bigger size hash table is allocated to store the data of the map.
 
 ## SSL/TLS
 

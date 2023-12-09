@@ -4,7 +4,7 @@
 
 OOP stands for object-oriented programming. Like its name, OOP means focusing on objects and building things upon them. In real world, almost everything is an entity with some data and some behaviors, which OOP can be used to articulated quite exactly, compared to other programming paradigms like procedural programming or functional programming.
 
-## What is the 4 principles of OOP?
+## What are the 4 principles of OOP?
 
 The four principles of OOP are encapsulation, abstraction, inheritance, and polymorphism.
 
@@ -12,6 +12,19 @@ The four principles of OOP are encapsulation, abstraction, inheritance, and poly
 - Abstraction means when we use a class, we only care about its public things, like public fields, methods, and don't care about its private stuff, about how it is implemented under the surface.
 - Inheritance allows a class to inherit the properties and characteristics of other classes.
 - Polymorphism allows using the same type and the same function call for same same but different action of related entities.
+```python
+class Bird:
+    def make_sound(self):
+        pass
+
+class Sparrow(Bird):
+    def make_sound(self):
+        return "Chirp!"
+
+class Parrot(Bird):
+    def make_sound(self):
+        return "Squawk!"
+```
 
 ## What is composition? Compare composition vs inheritance
 
@@ -27,28 +40,31 @@ When class A extends the abstract class B, class A is a B. For example, a cat is
 
 ## Explain class constructor. Why does the constructor not return any value?
 
-To be defined.
+A class constructor is a special member function that automatically gets called whenever you create a new object that class.
 
 ## What does private, protected, public means and what are the difference?
 
 These keywords indicate the access scope of things like methods, fields in an OOP language.
 
-- Things with "private" scope can be accessed by things in the same class.
-- Things with "default" scope can be accessed in the same package.
-- Things with "protected" scope is being able to be accessed by things in the same package and outside things that has inheritance relationship.
-- Things with "public" scope can be accessed by everything.
+- Public: Members declared as `public` can be accessed by everthing (every class, package).
+- Protected: Members declared as `protected` can be accessed any thing in the same package and outside things that has inheritance relationship.
+- Default: Members declared as `default` can be accessed by anything in the same package.
+- Private: Members declared as `private` can be accessed by things in the same class.
+
+------------------------------
 
 ## Functional programming. What is FP? Why should we use FP?
 
-To be defined.
+Functional programming is a programming paradigm that focuses on building programs using functions as the primary building blocks. FP focuses on the transformation of data through pure functions.
 
 ## FP characteristics
 
 Some highlight characteristics of functional programming are:
 
-- Immutability: variable should be set once and not changed.
-- Pure function: the return value should depend only on the input value, and create no side effect.
-- Function is first-class citizen. We can create a function, assign a function to a variable, pass it as a parameter and return it as a value.
+- Immutability: Variable should be set once and not changed.
+- Pure function: The return value should depend only on the input value, and create no side effects (do not modify anything outside their scope).
+- First-class functions: Functions can be treated like any other value. We can create a function, assign a function to a variable, pass it as a parameter and return it as a value.
+- Higher-order functions: Functions can operate on other functions. This allows for powerful abstractions and concise code (i.e. you can define a function that take other functions as parameters).
 
 ## What is immutability and why is it important?
 
@@ -83,8 +99,12 @@ To be defined.
 To be defined.
 
 ## Explain functor, applicative, monoid, monad
+These are all concepts in functional programming that deal with data structure and how they transform under functions.
 
-- Functor is a type class that wraps value in a context and defines a fmap. A fmap is the function that takes another function and a wrapped value, then return a new wrapped value.
+- Functor is a type class that wraps value in a context and defines a `fmap`. A `fmap` is the function that takes another function and a wrapped value, then return a new wrapped value.
+
 - Applicative is a type class that wraps value in a context and defines a function that can take a value in a wrapped context and a function in a wrapped context, apply the function to value, then return the result wrapped in the context.
+
 - Monoid: to be defined.
+
 - Monad is a type class that wraps value in a context and defines a function that can take a value in a wrapped context and a function in a wrapped context, apply the function to value, then return the result wrapped in the context. But the different thing between applicative and monad is the return type of the function. In applicative, the function returns the value directly, while in monad, the function returns the value wrapped in a context.
