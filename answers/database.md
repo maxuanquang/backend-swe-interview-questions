@@ -2,35 +2,107 @@
 
 ## Compare Relational DB (SQL) vs NoSQL. It's also really nice to know about newSQL (a kind of auto sharding DB which support SQL stuff but scale like NoSQL)
 
-Relational DB is organized by schema, table. All records in a table must be in the same structure, follow some constraints. Relational DB guarantees ACID characteristics so it is safe and stable.
+- Relational DB is organized by schema, table. All records in a table must be in the same structure, follow some constraints. Relational DB guarantees ACID characteristics so it is safe and stable.
 
-NoSQL is something that is not relational DB. Currently, it contains 4 main kinds:
+- NoSQL is something that is not relational DB. Currently, it contains 4 main kinds:
+  - The first kind is Document. In this kind, each piece of data is a JSON document (e.g. MongoDB, Amazon Dynamo DB).
 
-- The first kind is Document. In this kind, each piece of data is a JSON document.
-- The second is Key-Value DB. Simply, it is like a hash map that maps one key to one value.
-- The third is Wide Column DB. Records in a table can have a different number of columns.
-- The last one is Graph which is suitable for some graph-like data, for example, connections of people on a social network.
+    ```json
+    {
+        "_id": "12345",
+        "name": "John Doe",
+        "age": 30,
+        "occupation": "Software Engineer",
+        "hobbies": ["Hiking", "Reading", "Music"],
+        "address": {
+            "street": "10 Main Street",
+            "city": "New York",
+            "state": "NY",
+            "zip": "10001"
+        }
+    }
+    ```
 
-## How these 2 things can scale up?
+  - The second is Key-Value DB. Simply, it is like a hash map that maps one key to one value (e.g. Redis).
 
-Usually, people scale up Relational DB vertically. Add more CPU, more RAM, more storage. An additional thing we can do is sharding, that device data into different clusters, different nodes. Due to ACID characteristics, relational DB needs to do more work when writing and reading data to ensure those characteristics.
-Cause NoSQL sacrifices one or some ACID characteristics, it can be easily scaled horizontally just by simply adding nodes.
+    ```json
+    key: "user:12345"
+    value: {
+        "name": "John Doe",
+        "age": 30,
+        "occupation": "Software Engineer"
+    }
+    ```
+
+  - The third is Wide Column DB. Records in a table can have a different number of columns (e.g. Cassandra).
+
+    ```json
+    RowKey: "user:12345"
+    ColumnFamily: "profile"
+    Column: "name"
+    Value: "John Doe"
+    Column: "age"
+    Value: 30
+    Column: "occupation"
+    Value: "Software Engineer"
+    ```
+
+  - The last one is Graph which is suitable for some graph-like data, for example, connections of people on a social network.
+
+- NewSQL is a class of RDBMS that aims to bridge the gap between traditional relational database and NoSQL databases. It seeks to provide scalability and performance of NoSQL while maintaining the ACID compliance.
+
+## How these 2 types of database scale up?
+
+- Usually, people scale up Relational DB vertically. Add more CPU, more RAM, more storage. An additional thing we can do is sharding, that device data into different clusters, different nodes. Due to ACID characteristics, relational DB needs to do more work when writing and reading data to ensure those characteristics.
+- Cause NoSQL sacrifices one or some ACID characteristics, it can be easily scaled horizontally just by simply adding nodes.
 
 ## 3 normal forms in DBMS
 
-The first normal form is about making everything atomic. It means a column stores a single value, not multiple values.
+- First Normal Form (1NF):
+  - A table is in 1NF if it meets the following criteria:
+    - Each column in the table contains only atomic (indivisible) values.
+    - Each row in the table is unique; there are no duplicate rows.
+  - 1NF ensures that each cell in the table contains a single value and that rows are distinct.
 
-The second normal form is about removing partial dependencies. It means no column depends only on a subset of the candidate key of the relation.
+- Second Normal Form (2NF):
+  - A table is in 2NF if it meets the following criteria:
+    - It is already in 1NF.
+    - It does not have partial dependencies.
+  - Partial dependency occurs when a non-key attribute depends on only part of the primary key.
+  - To achieve 2NF, you often need to break the table into multiple related tables and establish relationships between them.
 
-The third normal form is about removing transitive dependencies. It means there is no relationship that column A depends on column B, and column B depends on column C.
+- Third Normal Form (3NF):
+  - A table is in 3NF if it meets the following criteria:
+    - It is already in 2NF.
+    - It does not have transitive dependencies.
+  - Transitive dependency occurs when a non-key attribute depends on another non-key attribute. In 3NF, all non-key attributes must depend directly on the primary key.
+
+- Boyce-Codd Normal Form (BCNF):
+  - A table is in BCNF if it meets the following criteria:
+    - It is already in 3NF.
+    - A table is in BCNF if, for every non-trivial functional dependency (X -> Y), X is a key.
+  - Functional dependency: X is Security Number, Y is Name then X -> Y.
+  - Achieving BCNF often requires breaking a table into multiple related tables and establishing relationships between them.
+
+- Fourth Normal Form (4NF):
+  - A table is in 4NF if it meets the following criteria:
+    - It is already in BCNF.
+    - A table is in 4NF if, for every multi-valued dependency (X ->> Y), X is a key.
 
 ## ACID of SQL and BASE of NoSQL? Why NoSQL is eventual consistency?
 
+ACID:
+
+- Atomicity: A transaction is considered an atomic unit, either all operations within the transaction succeed, or all of them fail.
+- Consistency: Data should remain in consistent state after each transaction.
+- Isolation: In case many transactions running concurrently, they shouldn't affect each order.
+- Durability: Once a transaction is committed, its changes should be permanent and durable.
+
 BASE:
 
-- Basically Availability
-- Soft state
-- Eventually consistency
+- Basically Availability: NoSQL databases prioritize availability.
+- Soft state: Data is not guaranteed to be consistent across all nodes at all time.
+- Eventually consistency: Given enough time, all nodes will eventually have the same latest version of data.
 
 ## CAP theorem in this case. [This is a so nice graph](http://blog.nahurst.com/visual-guide-to-nosql-systems)
 
@@ -94,7 +166,7 @@ For text fields, index on that column only is used when filter condition filters
 
 ## The complexity of SQL query? How to measure it? How SQL optimize a query?
 
-To be defined.
+//TODO: Answer this
 
 ## Compare `WHERE id = 'a' AND id = 'b' AND id = 'c'` vs `WHERE id in (a, b, c)`?
 
@@ -102,13 +174,13 @@ In MySQL, the values in the IN list will be sorted and MySQL will use binary sea
 
 Some links to read more:
 
-- https://www.postgresql.org/message-id/12553.1135634231@sss.pgh.pa.us
+- <https://www.postgresql.org/message-id/12553.1135634231@sss.pgh.pa.us>
 
-- https://www.cybertec-postgresql.com/en/postgresql-indexing-index-scan-vs-bitmap-scan-vs-sequential-scan-basics/
+- <https://www.cybertec-postgresql.com/en/postgresql-indexing-index-scan-vs-bitmap-scan-vs-sequential-scan-basics/>
 
-- https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781785284335/11/ch11lvl1sec104/running-bitmap-heap-and-index-scan
+- <https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781785284335/11/ch11lvl1sec104/running-bitmap-heap-and-index-scan>
 
-- https://www.oreilly.com/library/view/high-performance-mysql/9780596101718/ch04.html"
+- <https://www.oreilly.com/library/view/high-performance-mysql/9780596101718/ch04.html>"
 
 ## Complexity of this query `SELECT * FROM abc ORDER BY name LIMIT 10 OFFSET 1000000` // SELECT 10 record from offset 10^6 after sort by name (which is a char)? How to optimize it?
 
@@ -170,21 +242,28 @@ Relational DB ensures Atomicity by Transaction. A transaction is a collection of
 
 ## How rollback works internally?
 
-To be defined.
+DBMS maintains a transaction log, which records all changes made to database. If a rollback is issued, DBMS use transaction log to undo the changes made during transaction, it read the transaction log in reverse order and do reverse action in each line.
 
-## What is dirty read, dirty write, read skew, phantom read, write skew, lost update?
+## What is dirty read, dirty write, read skew (non-repeatable read), phantom read, write skew, lost update?
 
-Dirty read is when transaction A is allowed to read a value that has been modified by transaction B but has yet been committed. This may cause a problem when transaction B fails and rollback happens, so the value that A reads is not the value in database.
+|  | Dirty read | Non-repeatable read | Phantom read |
+|-----------------|------------|---------------------|--------------|
+|Read Uncommited| Possible | Possible | Possible |
+|Read Commited| Not Possible | Possible | Possible |
+|Repeatable Read| Not Possible | Not Possible | Possible |
+|Serializable | Not Possible | Not Possible | Not Possible |
 
-Dirty write is when transaction A is allowed to write a value that has been modified by transaction B but has yet been committed.
+- Dirty read is when transaction A is allowed to read a value that has been modified by transaction B but has yet been committed. This may cause a problem when transaction B fails and rollback happens, so the value that A reads is not the value in database.
 
-Read skew is when someone needs to read one value multiple times in a transaction. But the result each time is different.
+- Read skew is when someone needs to read one value multiple times in a transaction. But the result each time is different. This happens when another transaction modifies the data between the two reads of the first transaction.
 
-Phantom read is when a transaction needs to get a collection of records multiple times in a transaction. But the number of records each time is different.
+- Phantom read is when a transaction needs to find a collection of records multiple times in a transaction. But the number of records each time is different due to new rows being added or existing rows beign deleted by other transaction.
 
-Write skew is when someone needs to read some object then update some object based on the result of the read value.
+- Dirty write happens when a transaction overwrites data that another uncommitted transaction has written. This can lead to inconsistencies, as the first transaction's changes are lost, and the data integrity is compromised.
 
-Lost update is a special case of write skew when read and update happen with the same object.
+- Write skew is when someone needs to read some object then update some object based on the result of the read value.
+
+- Lost update occurs when two transactions read the same data and then both update the data based on the read value. As a result, one of the updates is lost.
 
 Read committed is a weak isolation level that is used to guarantee no dirty read and no dirty write. It assures that all object that can be read is already committed and no write can happen to an uncommitted object.
 
@@ -194,16 +273,55 @@ Read committed is a weak isolation level that is used to guarantee no dirty read
 
 To be defined.
 
-## How to avoid race condition in DB? Read/Write lock?
+## How to avoid race condition in DB? Read/Write/Range lock?
 
-To be defined.
+#### Read Lock (Shared Lock)
+
+- Purpose: A read lock is used when a transaction needs to read data without modification.
+- Behavior:
+  - Multiple transactions can hold a read lock on the same data item simultaneously, allowing concurrent reads.
+  - However, if a read lock is in place, transactions that wish to write to the locked data must wait until all read locks are released.
+- Use Case: Useful in scenarios with frequent read operations and where it is acceptable to have concurrent reads, but updates need to be regulated to maintain data integrity.
+
+#### Write Lock (Exclusive Lock)
+
+- Purpose: A write lock is used when a transaction intends to modify (write or update) data.
+- Behavior:
+  - When a write lock is placed on a data item, no other transaction can read or write that data until the lock is released.
+  - This is an exclusive lock, meaning it completely restricts other transactions from accessing the locked data.
+- Use Case: Essential in scenarios where data integrity during updates is critical, preventing concurrent transactions from accessing data that is being modified.
+
+#### Range Lock
+
+- Purpose: A range lock is a more specific type of lock used to lock a range of records or keys.
+- Behavior:
+  - It locks a contiguous range of items based on key values or record positions, rather than a single item or entire table.
+  - This is particularly useful in scenarios involving range queries or operations on a subset of records within a certain range.
+- Use Case: Common in serializable isolation level to prevent phenomena like phantom reads. For instance, it's used to lock a range of records from being inserted, updated, or deleted by other transactions during a range query.
+
+## What is optimistic locking and pessimistic locking?
+
+Optimistic locking and pessimistic locking are two models for locking data in a database.
+
+- Optimistic locking is based on the assumption that conflicts due to concurrent data updates are rare. Rather than locking data, it allows multiple transactions to proceed. Here's how it works:
+  - Read Phase: A transaction reads data without accquiring locks, it just takes a version number of the data.
+  - Write Phase (Commit Attempt): When the transaction attemps to write to the database, it checks if the data has been modified by another transactions by comparing the current data version with the one it having in hand.
+  - Conflict Handling:
+    - If the data has not been modified, the write is allowed to proceed, version of data is updated.
+    - If the data has been modified, it needs to retry.
+- Pessimistic locking assumes that conflicts are likely and thus locks data to prevent concurrent access by other transactions. Here's how it works:
+  - Lock Acquisition: When a transaction wants to read or write data, it first acquires a lock on that data. Depends on what operation needed, read lock or write lock can be used.
+  - Lock Release: After done reading, writing data, it releases the lock.
 
 ## Distributed transaction? How to make a transaction when a query needs to access multiple DB?
 
 A distributed transaction is needed when data that suppose to be in a transaction is stored in different databases. There is a technique called 2 phase commit (2PC) that helps to resolve this situation.
 
-There will be a coordinator which orchestrates the whole transaction. When the transaction begins, the coordinator generates a global transaction ID for all participants of this transaction. Each participant will execute their own transaction that attaches to the global transaction. When all local transactions are done, the coordinator sends the prepare request for all participants. This is the first phase - the prepare phase in 2PC. Participants can respond yes or no, indicate if they can commit this transaction or not. And the "yes" answer is the promise that it will be able to commit this transaction no matter what. If all participants respond "yes", the coordinator can decide to commit this transaction and send the commit request to all participants. This is the second phase of 2PC, the commit phase. Once the commit decision is made by the coordinator, it is irreversible. It will keep resending commit requests to participants no matter what. If the coordinator fails, the participant must keep the status of being able to commit this global transaction no matter what.
+There will be a coordinator which orchestrates the whole transaction.
 
-## What is Try-Confirm Cancel?
+- The first phase - Prepare: When the transaction begins, the coordinator generates a global transaction ID for all participants of this transaction. Each participant will execute their own transaction that attaches to the global transaction. When all local transactions are done, the coordinator sends the prepare request for all participants. Participants can respond yes or no, indicate if they can commit this transaction or not.
+- The second phase - Commit: If all participants respond "yes", the coordinator can decide to commit this transaction and send the commit request to all participants. This is the second phase of 2PC, the commit phase. If any participant responds "no", the coordinator sends a rollback message to all participants.
+
+## What is Try-Confirm-Cancel?
 
 To be defined.

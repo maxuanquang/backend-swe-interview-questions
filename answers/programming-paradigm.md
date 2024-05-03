@@ -11,7 +11,8 @@ The four principles of OOP are encapsulation, abstraction, inheritance, and poly
 - Encapsulation is a feature of OOP that wraps things into a unity, like wraps methods and fields into a class, wrapping classes into a package.
 - Abstraction means when we use a class, we only care about its public things, like public fields, methods, and don't care about its private stuff, about how it is implemented under the surface.
 - Inheritance allows a class to inherit the properties and characteristics of other classes.
-- Polymorphism allows using the same type and the same function call for same same but different action of related entities.
+- Polymorphism allows using the same type and the same function call for same name but different action of related entities.
+
 ```python
 class Bird:
     def make_sound(self):
@@ -26,22 +27,6 @@ class Parrot(Bird):
         return "Squawk!"
 ```
 
-## What is composition? Compare composition vs inheritance
-
-Composition is a has-a relationship. Like a house has rooms, a car has wheels. In OOP, the composition relationship is represented as fields in a class.
-
-Inheritance is an is-a relationship. Like a dog is an animal, a rose is a flower. In OOP, the inheritance relationship is represented as a class inheriting another class.
-
-## Interface vs abstract class
-
-The key difference between abstract class and interface is the relationship between it and the classes that extend or implement it.
-
-When class A extends the abstract class B, class A is a B. For example, a cat is an animal. But when class A implements an interface C, it only means A has C characteristics, like the Cat class can implement Climbing Tree interface.
-
-## Explain class constructor. Why does the constructor not return any value?
-
-A class constructor is a special member function that automatically gets called whenever you create a new object that class.
-
 ## What does private, protected, public means and what are the difference?
 
 These keywords indicate the access scope of things like methods, fields in an OOP language.
@@ -50,6 +35,38 @@ These keywords indicate the access scope of things like methods, fields in an OO
 - Protected: Members declared as `protected` can be accessed any thing in the same package and outside things that has inheritance relationship.
 - Default: Members declared as `default` can be accessed by anything in the same package.
 - Private: Members declared as `private` can be accessed by things in the same class.
+
+## Interface vs abstract class
+
+The key difference between abstract class and interface is the relationship between it and the classes that extend or implement it.
+
+When class A extends the abstract class B, class A is a B. For example, a cat is an animal. But when class A implements an interface C, it only means A has C characteristics, like the Cat class can implement Climbing Tree interface.
+
+## SOLID Principles
+
+- `Single Responsibility Principle`
+  - **Definition**: A class should have only one reason to change, meaning that it should have only one responsibility.
+  - **Implication**: Each class or module should have a single responsibility, and if there is more than one reason to change it, the class should be divided into multiple classes.
+- `Open/Closed Principle`
+  - **Definition**: Software entities (classes, modules, functions, etc.) should be open for extension and closed for modification.
+  - **Implication**: You should be able to extend the behavior of a module without modifying its source code.
+- `Liskov Substitution Principle`
+  - **Definition**: If a class is a subclass of another class, it should be able to be used wherever its base class is used without affecting the correctness of the program.
+- `Interface Segregation Principle`
+  - **Definition**: A class should not be forced to implement interfaces that it does not use.
+  - **Implication**: It's better to have several small, specific interfaces rather than a large, general-purpose one.
+- `Dependency Inversion Principle`
+  - **Definition**: Entities should depend on abstractions (interfaces or abstract classes) rather than correct implementations.
+
+## What is composition? Compare composition vs inheritance
+
+Composition is a has-a relationship. Like a house has rooms, a car has wheels. In OOP, the composition relationship is represented as fields in a class.
+
+Inheritance is an is-a relationship. Like a dog is an animal, a rose is a flower. In OOP, the inheritance relationship is represented as a class inheriting another class.
+
+## Explain class constructor. Why does the constructor not return any value?
+
+A class constructor is a special member function that automatically gets called whenever you create a new object that class.
 
 ------------------------------
 
@@ -99,6 +116,7 @@ To be defined.
 To be defined.
 
 ## Explain functor, applicative, monoid, monad
+
 These are all concepts in functional programming that deal with data structure and how they transform under functions.
 
 - Functor is a type class that wraps value in a context and defines a `fmap`. A `fmap` is the function that takes another function and a wrapped value, then return a new wrapped value.

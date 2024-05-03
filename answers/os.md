@@ -5,20 +5,22 @@
 # 1. Process and Thread
 
 ## What is `process`?
+
 - Process is like a program in execution.
 - The OS has a data structure called Process Controll Block (PCB) to store information and manage process. A PCB contains: Process ID, Process state, Program counters, CPU Registers, List of open files, etc.
 - A process in memory includes:
-    - Text segment contains the instructions of the program.
-    - Stack segment stores temporary data used during program execution.
-    - Data contains global variables.
-    - Heap is the memory that is dynamically allocated during run time.
+  - Text segment contains the instructions of the program.
+  - Stack segment stores temporary data used during program execution.
+  - Data contains global variables.
+  - Heap is the memory that is dynamically allocated during run time.
 
 ## What is `thread`?
+
 - Thread is an execution stream within a process. It comprises a thread ID, program counter, register set, and stack. It shares with other threads belonging to the same process its code section, data section, and other operating-system resources, such as open ﬁles and signals.
 
 ## What are the differences between `process` and `thread`?
 
-| Process     | Thread        | 
+| Process     | Thread        |
 | -----------   | -----------   |
 | <div style="width:290px">A process is like a program in execution. Each process has its own memory address space and is isolated.</div>     |      <div style="width:290px">Thread is an execution stream within a process. Multiple threads can exist within a process, sharing the same memory space, can easily communicate with each other.</div>    |
 
@@ -30,7 +32,8 @@ Thread is a lightweight process because it does not cost much CPU to switch betw
 
 - When process context switching happens, the state of the current process will be stored in Process Control Block (PCB), so this process can be resumed later. It includes the value of the CPU registers, the process state, and memory-management information. Data pages in memory of the current process are typically kept safe because the information about these pages have been saved in PCB. However, depending on the memory-management method of OS and the availability of memory, it can lead to the replacement of these data pages (data pages replacement have nothing to do with context switching).
 
-- When thread context switching happens, the state of the current thread will be stored in Thread Control Block (TCB), so the thread can be resumed later. It includes the value of the CPU registers, the thread state, a program counter, a stack pointer, and a pointer to the PCB of the process to which the thread belongs. There is one major difference in thread context switching compared to processes: the address space remains the same (there is no page replacement).
+- When thread context switching happens, the state of the current thread will be stored in Thread Control Block (TCB), so the thread can be resumed later. It includes the value of the CPU registers, the thread state, a program counter, a stack pointer, and a pointer to the PCB of the process to which the thread belongs. There is one major difference in state becomes running.
+- At the running state, the processor executes the process instructions. If the process need something like I/O, it moves to the Waiting state. If process completes its execution, it moves to Terminated state. If the process's time slice e thread context switching compared to processes: the address space remains the same (there is no page replacement).
 
 ## What is multi-process and multi-thread? When should we use which?
 
@@ -40,16 +43,18 @@ Multi-threading is when more than 2 threads created by the same process are runn
 
 ## Process has how many states? How does it change between each state?
 
-Basically, a process has 5 states: new, ready, running, wait, and terminate. 
+Basically, a process has 5 states: new, ready, running, wait, and terminate.
+
 - New is the state of the process when it is created (it is still in the process of setting up). After the process is intialized, it transitions to Ready state.
 - At the ready state, the process waits to be assigned to a processor. When the process is assigned to a processor, its state becomes running.
-- At the running state, the processor executes the process instructions. If the process need something like I/O, it moves to the Waiting state. If process completes its execution, it moves to Terminated state. If the process's time slice expires, or a higher priority process comes, it moves to state.
+- At the running state, the processor executes the process instructions. If the process need something like I/O, it moves to the Waiting state. If process completes its execution, it moves to Terminated state. If the process's time slice expires, or a higher priority process comes, it moves to waiting state.
 - At waiting state, the state is waiting for some external event (like I/O operation done) occurs, it then moves back to Ready state.
 - At terminated state, the process has finished its execution and is waiting for the OS to reclaim resoures. After the OS done reclaiming, it is removed from main memoey.
 
 ## Scheduling algorithm
 
 There are many types of scheduling algorithms like:
+
 - First come first serve: Processes are executed in the order they arrive in the ready queue.
 - Shortest job first: Executes the process with shortest estimated run time first.
 - Round-robin: Each process gets a small fixed amount of CPU time. After this time is up, the process is preempted and added to the end of ready queue.
@@ -131,12 +136,12 @@ Race condition is when two threads access a variable at the same time. It can le
 - Synchronization: Use of atomic operations to ensure cooperation between threads.
 - Mutual Exclusion (mutex): Ensures that only one thread does an activity at a time and excludes other threads from doing at that time.
 - Lock: A mechanism that a process use to prevent other process from doing something:
-    - Lock before entering a critical section (or accessing shared data).
-    - Unlock when leaving a critical section.
-    - Wait if locked.
+  - Lock before entering a critical section (or accessing shared data).
+  - Unlock when leaving a critical section.
+  - Wait if locked.
 - Semaphore is a generalized lock, to control the number of available resources.
-    - Binary Semaphore is same as lock.
-    - Counting Semaphore is used when multiple units of a resource are available. The initial value of counting semaphore is usually the number of resources. A process can acquire access as long as semphore > 0 (at least one unit of the resource is available).
+  - Binary Semaphore is same as lock.
+  - Counting Semaphore is used when multiple units of a resource are available. The initial value of counting semaphore is usually the number of resources. A process can acquire access as long as semphore > 0 (at least one unit of the resource is available).
 - Spinlock is a mechanism in which a process keeps asking (busy-wait) for the availability of the resource via polling (instead of sleeping while waiting for the availability of resource).
 
 ## What is deadlock and how to avoid deadlock?
@@ -163,11 +168,13 @@ To be defined.
 Virtual memory is a memory management technique used by operating systems to provide an "illusion" to processes that each one has its own dedicated piece of the computer's physical memory, known as RAM (Random Access Memory). In reality, the physical memory is shared among multiple processes, and each process is given the illusion that it has a contiguous block of addressable memory, known as virtual memory.
 
 #### Why do we need it?
+
 - Isolation: Each process has its own memory space, preventing other process to access.
 - Efficient Use of Physical Memory
 - Ease of Programming
 
 #### How does it work?
+
 Read more [here](https://tildesites.bowdoin.edu/~sbarker/teaching/courses/os/14spring/lectures.html) at Leture 11, 12, 13.
 
 ## How large virtual memory is?
